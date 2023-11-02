@@ -1,0 +1,14 @@
+service NumberService {
+  // Sends a greeting
+  rpc GetNumber (NumberRequest) returns (NumberResponse) {}
+}
+
+// The request message containing the user's name.
+message NumberRequest {
+  string name = 1;
+}
+
+// The response message containing the greetings
+message NumberResponse {
+  int number = 1;
+}
