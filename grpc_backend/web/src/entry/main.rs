@@ -1,7 +1,7 @@
-use grpc_backend_web::config::Config;
 use cali_derive::setup_server;
-use std::{error::Error, str::FromStr};
+use grpc_backend_web::config::Config;
 use std::sync::Arc;
+use std::{error::Error, str::FromStr};
 
 #[derive(Debug, Clone)]
 pub struct ServerContext {}

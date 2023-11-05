@@ -1,4 +1,5 @@
-pub mod number_service;use thiserror::Error as ThisError;
+pub mod number_service;
+use thiserror::Error as ThisError;
 use tonic::Status;
 
 impl From<AppError> for Status {
