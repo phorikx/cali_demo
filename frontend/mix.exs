@@ -50,7 +50,9 @@ defmodule Frontend.MixProject do
       {:gettext, "~> 0.20"},
       {:jason, "~> 1.2"},
       {:dns_cluster, "~> 0.1.1"},
-      {:plug_cowboy, "~> 2.5"}
+      {:plug_cowboy, "~> 2.5"},
+      {:grpc, "~> 0.7"},
+      {:protobuf, "~> 0.11"}
     ]
   end
 

@@ -9,7 +9,6 @@ defmodule Frontend.Application do
   def start(_type, _args) do
     children = [
       FrontendWeb.Telemetry,
-      Frontend.Repo,
       {DNSCluster, query: Application.get_env(:frontend, :dns_cluster_query) || :ignore},
       {Phoenix.PubSub, name: Frontend.PubSub},
       # Start the Finch HTTP client for sending emails
