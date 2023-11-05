@@ -7,10 +7,6 @@
 # General application configuration
 import Config
 
-config :frontend,
-  ecto_repos: [Frontend.Repo],
-  generators: [timestamp_type: :utc_datetime]
-
 # Configures the endpoint
 config :frontend, FrontendWeb.Endpoint,
   url: [host: "localhost"],
