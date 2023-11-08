@@ -1,4 +1,5 @@
 pub mod number_service;
+pub mod normal_service;
 use thiserror::Error as ThisError;
 use tonic::Status;
 

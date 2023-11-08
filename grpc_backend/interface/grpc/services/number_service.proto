@@ -3,6 +3,7 @@ package number_service;
 
 service NumberService {
     rpc GetNumber (NumberRequest) returns (NumberResponse) {}
+    rpc CheckAgainstNormalDistribution (stream SendNumber) returns (NormalResponse) {}
 }
 
 message NumberRequest {
@@ -11,4 +12,13 @@ message NumberRequest {
 
 message NumberResponse {
   int32 number = 1;
+}
+
+message SendNumber {
+  int32 number = 1;
+}
+
+message NormalResponse {
+  int32 mean = 1;
+  int32 standard_deviation = 1;
 }

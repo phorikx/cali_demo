@@ -1,0 +1,15 @@
+syntax = "proto3";
+package normal_service;
+
+service NormalService {
+    rpc CheckAgainstNormalDistribution (stream NumbersRequest) returns (NormalResponse) {}
+}
+
+message Numbersequest {
+  int32 datapoint = 1;
+}
+
+message NormalResponse {
+  int32 mean = 1;
+  int32 standard_deviation = 1;
+}
