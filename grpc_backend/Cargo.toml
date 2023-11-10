@@ -2,5 +2,5 @@
 
 members = [
     "web",
-    "core"
+    "project_core"
 ]
