@@ -1,25 +1,27 @@
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
-pub struct NumberRequest {
-    #[prost(string, tag = "1")]
-    pub name: ::prost::alloc::string::String,
+pub struct NumbersRequest {
+    #[prost(int32, tag = "1")]
+    pub datapoint: i32,
 }
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
-pub struct NumberResponse {
+pub struct NormalResponse {
     #[prost(int32, tag = "1")]
-    pub number: i32,
+    pub mean: i32,
+    #[prost(int32, tag = "2")]
+    pub standard_deviation: i32,
 }
 /// Generated client implementations.
-pub mod number_service_client {
+pub mod normal_service_client {
     #![allow(unused_variables, dead_code, missing_docs, clippy::let_unit_value)]
     use tonic::codegen::*;
     use tonic::codegen::http::Uri;
     #[derive(Debug, Clone)]
-    pub struct NumberServiceClient<T> {
+    pub struct NormalServiceClient<T> {
         inner: tonic::client::Grpc<T>,
     }
-    impl NumberServiceClient<tonic::transport::Channel> {
+    impl NormalServiceClient<tonic::transport::Channel> {
         /// Attempt to create a new client by connecting to a given endpoint.
         pub async fn connect<D>(dst: D) -> Result<Self, tonic::transport::Error>
         where
@@ -30,7 +32,7 @@ pub mod number_service_client {
             Ok(Self::new(conn))
         }
     }
-    impl<T> NumberServiceClient<T>
+    impl<T> NormalServiceClient<T>
     where
         T: tonic::client::GrpcService<tonic::body::BoxBody>,
         T::Error: Into<StdError>,
@@ -48,7 +50,7 @@ pub mod number_service_client {
         pub fn with_interceptor<F>(
             inner: T,
             interceptor: F,
-        ) -> NumberServiceClient<InterceptedService<T, F>>
+        ) -> NormalServiceClient<InterceptedService<T, F>>
         where
             F: tonic::service::Interceptor,
             T::ResponseBody: Default,
@@ -62,7 +64,7 @@ pub mod number_service_client {
                 http::Request<tonic::body::BoxBody>,
             >>::Error: Into<StdError> + Send + Sync,
         {
-            NumberServiceClient::new(InterceptedService::new(inner, interceptor))
+            NormalServiceClient::new(InterceptedService::new(inner, interceptor))
         }
         /// Compress requests with the given encoding.
         ///
@@ -95,10 +97,10 @@ pub mod number_service_client {
             self.inner = self.inner.max_encoding_message_size(limit);
             self
         }
-        pub async fn get_number(
+        pub async fn check_against_normal_distribution(
             &mut self,
-            request: impl tonic::IntoRequest<super::NumberRequest>,
-        ) -> std::result::Result<tonic::Response<super::NumberResponse>, tonic::Status> {
+            request: impl tonic::IntoStreamingRequest<Message = super::NumbersRequest>,
+        ) -> std::result::Result<tonic::Response<super::NormalResponse>, tonic::Status> {
             self.inner
                 .ready()
                 .await
@@ -110,29 +112,34 @@ pub mod number_service_client {
                 })?;
             let codec = tonic::codec::ProstCodec::default();
             let path = http::uri::PathAndQuery::from_static(
-                "/number_service.NumberService/GetNumber",
+                "/normal_service.NormalService/CheckAgainstNormalDistribution",
             );
-            let mut req = request.into_request();
+            let mut req = request.into_streaming_request();
             req.extensions_mut()
-                .insert(GrpcMethod::new("number_service.NumberService", "GetNumber"));
-            self.inner.unary(req, path, codec).await
+                .insert(
+                    GrpcMethod::new(
+                        "normal_service.NormalService",
+                        "CheckAgainstNormalDistribution",
+                    ),
+                );
+            self.inner.client_streaming(req, path, codec).await
         }
     }
 }
 /// Generated server implementations.
-pub mod number_service_server {
+pub mod normal_service_server {
     #![allow(unused_variables, dead_code, missing_docs, clippy::let_unit_value)]
     use tonic::codegen::*;
-    /// Generated trait containing gRPC methods that should be implemented for use with NumberServiceServer.
+    /// Generated trait containing gRPC methods that should be implemented for use with NormalServiceServer.
     #[async_trait]
-    pub trait NumberService: Send + Sync + 'static {
-        async fn get_number(
+    pub trait NormalService: Send + Sync + 'static {
+        async fn check_against_normal_distribution(
             &self,
-            request: tonic::Request<super::NumberRequest>,
-        ) -> std::result::Result<tonic::Response<super::NumberResponse>, tonic::Status>;
+            request: tonic::Request<tonic::Streaming<super::NumbersRequest>>,
+        ) -> std::result::Result<tonic::Response<super::NormalResponse>, tonic::Status>;
     }
     #[derive(Debug)]
-    pub struct NumberServiceServer<T: NumberService> {
+    pub struct NormalServiceServer<T: NormalService> {
         inner: _Inner<T>,
         accept_compression_encodings: EnabledCompressionEncodings,
         send_compression_encodings: EnabledCompressionEncodings,
@@ -140,7 +147,7 @@ pub mod number_service_server {
         max_encoding_message_size: Option<usize>,
     }
     struct _Inner<T>(Arc<T>);
-    impl<T: NumberService> NumberServiceServer<T> {
+    impl<T: NormalService> NormalServiceServer<T> {
         pub fn new(inner: T) -> Self {
             Self::from_arc(Arc::new(inner))
         }
@@ -192,9 +199,9 @@ pub mod number_service_server {
             self
         }
     }
-    impl<T, B> tonic::codegen::Service<http::Request<B>> for NumberServiceServer<T>
+    impl<T, B> tonic::codegen::Service<http::Request<B>> for NormalServiceServer<T>
     where
-        T: NumberService,
+        T: NormalService,
         B: Body + Send + 'static,
         B::Error: Into<StdError> + Send + 'static,
     {
@@ -210,24 +217,30 @@ pub mod number_service_server {
         fn call(&mut self, req: http::Request<B>) -> Self::Future {
             let inner = self.inner.clone();
             match req.uri().path() {
-                "/number_service.NumberService/GetNumber" => {
+                "/normal_service.NormalService/CheckAgainstNormalDistribution" => {
                     #[allow(non_camel_case_types)]
-                    struct GetNumberSvc<T: NumberService>(pub Arc<T>);
+                    struct CheckAgainstNormalDistributionSvc<T: NormalService>(
+                        pub Arc<T>,
+                    );
                     impl<
-                        T: NumberService,
-                    > tonic::server::UnaryService<super::NumberRequest>
-                    for GetNumberSvc<T> {
-                        type Response = super::NumberResponse;
+                        T: NormalService,
+                    > tonic::server::ClientStreamingService<super::NumbersRequest>
+                    for CheckAgainstNormalDistributionSvc<T> {
+                        type Response = super::NormalResponse;
                         type Future = BoxFuture<
                             tonic::Response<Self::Response>,
                             tonic::Status,
                         >;
                         fn call(
                             &mut self,
-                            request: tonic::Request<super::NumberRequest>,
+                            request: tonic::Request<
+                                tonic::Streaming<super::NumbersRequest>,
+                            >,
                         ) -> Self::Future {
                             let inner = Arc::clone(&self.0);
-                            let fut = async move { (*inner).get_number(request).await };
+                            let fut = async move {
+                                (*inner).check_against_normal_distribution(request).await
+                            };
                             Box::pin(fut)
                         }
                     }
@@ -238,7 +251,7 @@ pub mod number_service_server {
                     let inner = self.inner.clone();
                     let fut = async move {
                         let inner = inner.0;
-                        let method = GetNumberSvc(inner);
+                        let method = CheckAgainstNormalDistributionSvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
                         let mut grpc = tonic::server::Grpc::new(codec)
                             .apply_compression_config(
@@ -249,7 +262,7 @@ pub mod number_service_server {
                                 max_decoding_message_size,
                                 max_encoding_message_size,
                             );
-                        let res = grpc.unary(method, req).await;
+                        let res = grpc.client_streaming(method, req).await;
                         Ok(res)
                     };
                     Box::pin(fut)
@@ -269,7 +282,7 @@ pub mod number_service_server {
             }
         }
     }
-    impl<T: NumberService> Clone for NumberServiceServer<T> {
+    impl<T: NormalService> Clone for NormalServiceServer<T> {
         fn clone(&self) -> Self {
             let inner = self.inner.clone();
             Self {
@@ -281,7 +294,7 @@ pub mod number_service_server {
             }
         }
     }
-    impl<T: NumberService> Clone for _Inner<T> {
+    impl<T: NormalService> Clone for _Inner<T> {
         fn clone(&self) -> Self {
             Self(Arc::clone(&self.0))
         }
@@ -291,7 +304,7 @@ pub mod number_service_server {
             write!(f, "{:?}", self.0)
         }
     }
-    impl<T: NumberService> tonic::server::NamedService for NumberServiceServer<T> {
-        const NAME: &'static str = "number_service.NumberService";
+    impl<T: NormalService> tonic::server::NamedService for NormalServiceServer<T> {
+        const NAME: &'static str = "normal_service.NormalService";
     }
 }
